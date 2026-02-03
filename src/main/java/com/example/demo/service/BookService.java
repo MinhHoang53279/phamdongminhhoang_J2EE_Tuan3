@@ -1,47 +1,41 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Book;
-import org.springframework.stereotype.Service;
-
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+
+import com.example.demo.model.Book;
 
 @Service
 public class BookService {
-    private final List<Book> books = new ArrayList<>();
-
-    public BookService() {
-        books.add(new Book(1, "Đắc Nhân Tâm", "Dale Carnegie"));
-        books.add(new Book(2, "Nhà Giả Kim", "Paulo Coelho"));
-        books.add(new Book(3, "Tuổi Trẻ Đáng Giá Bao Nhiêu", "Rosie Nguyễn"));
-    }
+    private List<Book> books = new ArrayList<>();
 
     public List<Book> getAllBooks() {
         return books;
     }
 
-    public Book getBookById(int id) {
-        return books.stream()
-                .filter(book -> book.getId() == id)
-                .findFirst()
-                .orElse(null);
-    }
-
     public void addBook(Book book) {
+        book.setId(books.size() + 1);
         books.add(book);
     }
 
-    public void updateBook(int id, Book updatedBook) {
-        books.stream()
-                .filter(book -> book.getId() == id)
-                .findFirst()
-                .ifPresent(book -> {
-                    book.setTitle(updatedBook.getTitle());
-                    book.setAuthor(updatedBook.getAuthor());
-                });
+    public Optional<Book> getBookById(Long id) {
+        return books.stream().filter(book -> book.getId() == id).findFirst();
     }
 
-    public void deleteBook(int id) {
+    public void updateBook(Book updatedBook) {
+        books.stream()
+            .filter(book -> book.getId() == updatedBook.getId())
+            .findFirst()
+            .ifPresent(book -> {
+                book.setTitle(updatedBook.getTitle());
+                book.setAuthor(updatedBook.getAuthor());
+            });
+    }
+
+    public void deleteBookById(Long id) {
         books.removeIf(book -> book.getId() == id);
     }
 }
